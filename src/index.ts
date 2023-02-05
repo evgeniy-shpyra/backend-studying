@@ -1,8 +1,9 @@
 import express from "express"
-const app = express()
+
+export const app = express()
 const port = 3000
 
-const HTTP_STATUSES = {
+export const HTTP_STATUSES = {
     OK_200: 200,
     CREATED_201: 201,
     NO_CONTENT_204: 204,
@@ -86,6 +87,13 @@ app.put("/courses/:id", (req, res) => {
     res.status(204).json(foundCourse)
 })
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+app.delete("/__test__/data", (req, res) => {
+    db.courses = []
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 })
+
+if (!module.parent) {
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)
+    })
+}

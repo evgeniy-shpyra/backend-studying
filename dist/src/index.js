@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HTTP_STATUSES = exports.app = void 0;
+exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 exports.app = (0, express_1.default)();
 const port = 3000;
-exports.HTTP_STATUSES = {
+const HTTP_STATUSES = {
     OK_200: 200,
     CREATED_201: 201,
     NO_CONTENT_204: 204,
@@ -32,14 +32,14 @@ exports.app.get("/courses", (req, res) => {
 exports.app.get("/courses/:id", (req, res) => {
     const foundCourse = db.courses.find((item) => item.id === +req.params.id);
     if (!foundCourse) {
-        res.sendStatus(exports.HTTP_STATUSES.NOT_FOUND_404);
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
         return;
     }
     res.json(foundCourse);
 });
 exports.app.post("/courses", (req, res) => {
     if (!req.body.title) {
-        res.sendStatus(exports.HTTP_STATUSES.BAD_REQUEST_400);
+        res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
         return;
     }
     const newCourse = {
@@ -47,36 +47,30 @@ exports.app.post("/courses", (req, res) => {
         title: req.body.title.trim(),
     };
     db.courses.push(newCourse);
-    res.status(exports.HTTP_STATUSES.CREATED_201).json(newCourse);
+    res.status(HTTP_STATUSES.CREATED_201).json(newCourse);
 });
 exports.app.delete("/courses/:id", (req, res) => {
     const indexOfCourse = db.courses.findIndex((item) => item.id === +req.params.id);
     if (indexOfCourse < 0) {
-        res.sendStatus(exports.HTTP_STATUSES.NOT_FOUND_404);
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
         return;
     }
     db.courses.splice(indexOfCourse, 1);
-    res.sendStatus(exports.HTTP_STATUSES.NO_CONTENT_204);
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204);
 });
 exports.app.put("/courses/:id", (req, res) => {
     if (!req.body.title) {
-        res.sendStatus(exports.HTTP_STATUSES.BAD_REQUEST_400);
+        res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400);
         return;
     }
     const foundCourse = db.courses.find((item) => item.id === +req.params.id);
     if (!foundCourse) {
-        res.sendStatus(exports.HTTP_STATUSES.NOT_FOUND_404);
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
         return;
     }
     foundCourse.title = req.body.title.trim();
     res.status(204).json(foundCourse);
 });
-exports.app.delete("/__test__/data", (req, res) => {
-    db.courses = [];
-    res.sendStatus(exports.HTTP_STATUSES.NO_CONTENT_204);
+exports.app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
 });
-if (!module.parent) {
-    exports.app.listen(port, () => {
-        console.log(`Example app listening on port ${port}`);
-    });
-}
